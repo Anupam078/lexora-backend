@@ -1,9 +1,9 @@
 package com.lexora.lexora_backend.auth;
 
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +47,20 @@ public class JwtService {
         try {
             extractClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            System.out.println("Token expired");
+
+        } catch (SignatureException e) {
+            System.out.println("Invalid signature");
+
+        } catch (MalformedJwtException e) {
+            System.out.println("Malformed token");
+
         } catch (Exception e) {
-            return false;
+            System.out.println("Invalid token");
         }
+
+        return false;
     }
 }
+
