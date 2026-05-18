@@ -24,9 +24,9 @@ public class JwtService {
     }
     private static final long EXPIRATION_TIME= 1000*60*60*24;
 
-    public String generateToken(UserDetails user, String tenantId, String role) {
+    public String generateToken(String email, String tenantId, String role) {
         return Jwts.builder()
-                .claim("userId", user.getUsername())
+                .claim("userId", email)
                 .claim("tenantId", tenantId)
                 .claim("role", role)
                 .issuedAt(new Date())
