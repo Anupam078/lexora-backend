@@ -96,10 +96,10 @@ public class AuthController {
 
         // 4. Generate and return JWT
         String token = jwtService.generateToken(
-                user.getEmail(),
+                user.getId().toString(),  // real UUID instead of email
                 tenant.getId().toString(),
-                user.getRole().name()  // .name() converts enum to String "ADMIN"
-        );
+                user.getRole().name()
+        );;
 
         return ResponseEntity.ok(new LoginResponse(token));
     }
