@@ -2,6 +2,7 @@ package com.lexora.lexora_backend.auth;
 
 import com.lexora.lexora_backend.tenant.Tenant;
 import com.lexora.lexora_backend.tenant.TenantRepository;
+import com.lexora.lexora_backend.user.Role;
 import com.lexora.lexora_backend.user.User;
 import com.lexora.lexora_backend.user.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,7 @@ public class AuthController {
         admin.setFullName(request.fullName());
         admin.setEmail(request.email());
         admin.setPasswordHash(passwordEncoder.encode(request.password()));
-        admin.setRole("ADMIN");
+        admin.setRole(Role.ADMIN);
 
         userRepository.save(admin);
 
@@ -97,7 +98,7 @@ public class AuthController {
         String token = jwtService.generateToken(
                 user.getEmail(),
                 tenant.getId().toString(),
-                user.getRole()
+                user.getRole().name()  // .name() converts enum to String "ADMIN"
         );
 
         return ResponseEntity.ok(new LoginResponse(token));
