@@ -6,6 +6,7 @@ import com.lexora.lexora_backend.tenant.TenantRepository;
 import com.lexora.lexora_backend.user.Role;
 import com.lexora.lexora_backend.user.User;
 import com.lexora.lexora_backend.user.UserRepository;
+import com.lexora.lexora_backend.user.UserResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,10 +66,12 @@ public class UserManagementController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         UUID tenantId = UUID.fromString(TenantContext.getTenantId());
-        List<User> users = userRepository.findAllByTenantId(tenantId);
+        List<UserResponse> users = userRepository.findAllByTenantId(tenantId)
+                .stream()
+                .map(UserResponse::from)
+                .toList();
         return ResponseEntity.ok(users);
     }
 }

@@ -20,20 +20,20 @@ public class CaseController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADVOCATE') or hasRole('ADMIN')")
-    public ResponseEntity<Case> createCase(@RequestBody CreateCaseRequest request) {
-        Case created = caseService.createCase(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<CaseResponse>  createCase(@RequestBody CreateCaseRequest request) {
+        CaseResponse created = caseService.createCase(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(caseService.createCase(request));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADVOCATE') or hasRole('ADMIN')")
-    public ResponseEntity<List<Case>> getCases() {
+    public ResponseEntity<List<CaseResponse>> getCases() {
         return ResponseEntity.ok(caseService.getCases());
     }
 
     @PutMapping("/{caseId}")
     @PreAuthorize("hasRole('ADVOCATE') or hasRole('ADMIN')")
-    public ResponseEntity<Case> updateCase(@PathVariable UUID caseId,
+    public ResponseEntity<CaseResponse> updateCase(@PathVariable UUID caseId,
                                            @RequestBody UpdateCaseRequest request) {
         return ResponseEntity.ok(caseService.updateCase(caseId, request));
     }

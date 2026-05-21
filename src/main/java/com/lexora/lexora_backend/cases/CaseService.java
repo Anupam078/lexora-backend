@@ -29,7 +29,7 @@ public class CaseService {
         this.userRepository = userRepository;
     }
 
-    public Case createCase(CreateCaseRequest request) {
+    public CaseResponse  createCase(CreateCaseRequest request) {
         UUID tenantId = UUID.fromString(TenantContext.getTenantId());
 
         // Get current user from SecurityContext
@@ -61,10 +61,10 @@ public class CaseService {
         newCase.setRespondentName(request.respondentName());
         newCase.setFilingDate(request.filingDate());
 
-        return caseRepository.save(newCase);
+        return CaseResponse.from(caseRepository.save(newCase));
     }
 
-    public List<Case> getCases() {
+    public List<CaseResponse> getCases() {
         UUID tenantId = UUID.fromString(TenantContext.getTenantId());
         String userId = SecurityContextHolder.getContext()
                 .getAuthentication().getName();
@@ -76,14 +76,20 @@ public class CaseService {
 
         // ADMIN sees all cases, ADVOCATE sees only their own
         if (currentUser.getRole() == Role.ADMIN) {
-            return caseRepository.findAllByTenantId(tenantId);
+            return caseRepository.findAllByTenantId(tenantId)
+                    .stream()
+                    .map(CaseResponse::from)
+                    .toList();
         } else {
             return caseRepository.findAllByAdvocateIdAndTenantId(
-                    UUID.fromString(userId), tenantId);
+                            UUID.fromString(userId), tenantId)
+                    .stream()
+                    .map(CaseResponse::from)
+                    .toList();
         }
     }
 
-    public Case updateCase(UUID caseId, UpdateCaseRequest request) {
+    public CaseResponse  updateCase(UUID caseId, UpdateCaseRequest request) {
         UUID tenantId = UUID.fromString(TenantContext.getTenantId());
 
         Case existingCase = caseRepository.findById(caseId)
@@ -100,6 +106,6 @@ public class CaseService {
         existingCase.setStatus(request.status());
         existingCase.setCourtName(request.courtName());
 
-        return caseRepository.save(existingCase);
+        return CaseResponse.from(caseRepository.save(existingCase));
     }
 }
