@@ -20,8 +20,7 @@ public class CaseController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADVOCATE') or hasRole('ADMIN')")
-    public ResponseEntity<CaseResponse>  createCase(@RequestBody CreateCaseRequest request) {
-        CaseResponse created = caseService.createCase(request);
+    public ResponseEntity<CaseResponse> createCase(@RequestBody CreateCaseRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(caseService.createCase(request));
     }
 
