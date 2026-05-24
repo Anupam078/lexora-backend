@@ -61,7 +61,7 @@ public class HearingService {
         }
 
         Hearing hearing = new Hearing();
-        hearing.setCase_(case_);
+        hearing.setHearingCase(case_);;
         hearing.setTenantId(tenantId);
         hearing.setScheduledDate(request.scheduledDate());
         hearing.setScheduledTime(request.scheduledTime());
@@ -92,7 +92,7 @@ public class HearingService {
                     HttpStatus.FORBIDDEN, "Access denied");
         }
 
-        return hearingRepository.findAllByCaseId(caseId)
+        return hearingRepository.findAllByHearingCaseId(caseId)
                 .stream()
                 .map(HearingResponse::from)
                 .toList();
@@ -111,7 +111,7 @@ public class HearingService {
                     .toList();
         } else {
             return hearingRepository
-                    .findAllByTenantIdAndCase_AdvocateIdAndScheduledDateGreaterThanEqual(
+                    .findAllByTenantIdAndHearingCaseAdvocateIdAndScheduledDateGreaterThanEqual(
                             tenantId, currentUser.getId(), LocalDate.now())
                     .stream()
                     .map(HearingResponse::from)
@@ -135,7 +135,7 @@ public class HearingService {
 
         // Advocate can only update hearings on their own cases
         if (currentUser.getRole() == Role.ADVOCATE &&
-                !hearing.getCase_().getAdvocate().getId()
+                !hearing.getHearingCase().getAdvocate().getId()
                         .equals(currentUser.getId())) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "Access denied");

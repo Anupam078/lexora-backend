@@ -19,7 +19,7 @@ public class Hearing {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id")
-    private Case case_;
+    private Case hearingCase;
 
     @Column(name = "tenant_id")
     private UUID tenantId;

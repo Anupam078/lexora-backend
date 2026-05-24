@@ -1,11 +1,14 @@
 package com.lexora.lexora_backend.cases;
 
+import com.lexora.lexora_backend.client.Client;
 import com.lexora.lexora_backend.tenant.Tenant;
 import com.lexora.lexora_backend.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -62,4 +65,12 @@ public class Case {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "case_clients",
+            joinColumns = @JoinColumn(name = "case_id"),
+            inverseJoinColumns = @JoinColumn(name = "client_id")
+    )
+    private List<Client> clients = new ArrayList<>();
 }

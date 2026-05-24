@@ -23,9 +23,9 @@ public record HearingResponse(
     public static HearingResponse from(Hearing hearing) {
         return new HearingResponse(
                 hearing.getId(),
-                hearing.getCase_().getId(),
-                hearing.getCase_().getCaseNumber(),
-                hearing.getCase_().getTitle(),
+                hearing.getHearingCase().getId(),
+                hearing.getHearingCase().getCaseNumber(),
+                hearing.getHearingCase().getTitle(),
                 hearing.getScheduledDate(),
                 hearing.getScheduledTime(),
                 hearing.getCourtRoom(),
