@@ -8,5 +8,4 @@ import java.util.UUID;
 public interface ClientRepository extends JpaRepository<Client, UUID> {
     List<Client> findAllByTenantIdAndIsActive(UUID tenantId, boolean isActive);
     Optional<Client> findByIdAndTenantId(UUID id, UUID tenantId);
-    List<Client> findAllByCasesIdAndTenantId(UUID caseId, UUID tenantId);
 }
