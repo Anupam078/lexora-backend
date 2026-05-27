@@ -1,5 +1,6 @@
 package com.lexora.lexora_backend.cases;
 
+import com.lexora.lexora_backend.exception.InvalidTransitionException;
 import com.lexora.lexora_backend.tenant.Tenant;
 import com.lexora.lexora_backend.tenant.TenantContext;
 import com.lexora.lexora_backend.tenant.TenantRepository;
@@ -9,6 +10,7 @@ import com.lexora.lexora_backend.user.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -55,7 +57,7 @@ public class CaseService {
         newCase.setAdvocate(advocate);
         newCase.setCaseNumber(request.caseNumber());
         newCase.setTitle(request.title());
-        newCase.setStatus("ACTIVE");
+        newCase.setStatus(CaseStatus.ACTIVE);
         newCase.setCourtName(request.courtName());
         newCase.setPetitionerName(request.petitionerName());
         newCase.setRespondentName(request.respondentName());
@@ -106,6 +108,31 @@ public class CaseService {
         existingCase.setStatus(request.status());
         existingCase.setCourtName(request.courtName());
 
+        return CaseResponse.from(caseRepository.save(existingCase));
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public CaseResponse transitionStatus(UUID caseId, CaseStatus newStatus) {
+        UUID tenantId = UUID.fromString(TenantContext.getTenantId());
+
+        Case existingCase = caseRepository.findById(caseId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Case not found"));
+
+        if (!existingCase.getTenant().getId().equals(tenantId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        CaseStatus currentStatus = existingCase.getStatus();
+
+        if (!currentStatus.canTransitionTo(newStatus)) {
+            throw new InvalidTransitionException(
+                    currentStatus.name(),
+                    newStatus.name()
+            );
+        }
+
+        existingCase.setStatus(newStatus);
         return CaseResponse.from(caseRepository.save(existingCase));
     }
 }

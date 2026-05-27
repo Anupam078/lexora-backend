@@ -36,4 +36,14 @@ public class CaseController {
                                            @RequestBody UpdateCaseRequest request) {
         return ResponseEntity.ok(caseService.updateCase(caseId, request));
     }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<CaseResponse> transitionStatus(
+            @PathVariable UUID id,
+            @RequestBody TransitionStatusRequest request) {
+
+        CaseStatus newStatus = CaseStatus.valueOf(request.status().toUpperCase());
+        CaseResponse response = caseService.transitionStatus(id, newStatus);
+        return ResponseEntity.ok(response);
+    }
 }

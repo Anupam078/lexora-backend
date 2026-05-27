@@ -34,8 +34,9 @@ public class Case {
     @Column(nullable = false)
     private String title;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private CaseStatus status = CaseStatus.FILED;
 
     @Column(name = "court_name", nullable = false)
     private String courtName;

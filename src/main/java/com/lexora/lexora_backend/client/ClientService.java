@@ -1,10 +1,15 @@
 package com.lexora.lexora_backend.client;
 
+import com.lexora.lexora_backend.cases.Case;
+import com.lexora.lexora_backend.cases.CaseResponse;
+import com.lexora.lexora_backend.cases.CaseStatus;
+import com.lexora.lexora_backend.exception.InvalidTransitionException;
 import com.lexora.lexora_backend.tenant.Tenant;
 import com.lexora.lexora_backend.tenant.TenantContext;
 import com.lexora.lexora_backend.tenant.TenantRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
