@@ -9,7 +9,7 @@ public record CaseResponse(
         UUID id,
         String caseNumber,
         String title,
-        String status,
+        CaseStatus status,
         String courtName,
         String petitionerName,
         String respondentName,

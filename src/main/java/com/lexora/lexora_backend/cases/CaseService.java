@@ -105,7 +105,7 @@ public class CaseService {
         }
 
         existingCase.setTitle(request.title());
-        existingCase.setStatus(request.status());
+        existingCase.setStatus(CaseStatus.valueOf(request.status().toUpperCase()));
         existingCase.setCourtName(request.courtName());
 
         return CaseResponse.from(caseRepository.save(existingCase));
