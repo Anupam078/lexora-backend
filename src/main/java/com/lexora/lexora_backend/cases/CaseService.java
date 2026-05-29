@@ -1,5 +1,7 @@
 package com.lexora.lexora_backend.cases;
 
+import com.lexora.lexora_backend.audit.AuditAction;
+import com.lexora.lexora_backend.audit.AuditService;
 import com.lexora.lexora_backend.exception.InvalidTransitionException;
 import com.lexora.lexora_backend.tenant.Tenant;
 import com.lexora.lexora_backend.tenant.TenantContext;
@@ -22,13 +24,16 @@ public class CaseService {
     private final CaseRepository caseRepository;
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     public CaseService(CaseRepository caseRepository,
                        TenantRepository tenantRepository,
-                       UserRepository userRepository) {
+                       UserRepository userRepository,
+                       AuditService auditService) {
         this.caseRepository = caseRepository;
         this.tenantRepository = tenantRepository;
         this.userRepository = userRepository;
+        this.auditService = auditService;
     }
 
     public CaseResponse  createCase(CreateCaseRequest request) {
@@ -63,7 +68,12 @@ public class CaseService {
         newCase.setRespondentName(request.respondentName());
         newCase.setFilingDate(request.filingDate());
 
-        return CaseResponse.from(caseRepository.save(newCase));
+        Case saved = caseRepository.save(newCase);
+        auditService.log("CASE", saved.getId(), AuditAction.CREATED,
+                null, saved.getCaseNumber());
+        return CaseResponse.from(saved);
+
+
     }
 
     public List<CaseResponse> getCases() {
@@ -108,7 +118,12 @@ public class CaseService {
         existingCase.setStatus(CaseStatus.valueOf(request.status().toUpperCase()));
         existingCase.setCourtName(request.courtName());
 
-        return CaseResponse.from(caseRepository.save(existingCase));
+        Case saved = caseRepository.save(existingCase);
+        auditService.log("CASE", saved.getId(), AuditAction.UPDATED,
+                null, saved.getTitle());
+        return CaseResponse.from(saved);
+
+
     }
 
     @org.springframework.transaction.annotation.Transactional
@@ -133,6 +148,10 @@ public class CaseService {
         }
 
         existingCase.setStatus(newStatus);
-        return CaseResponse.from(caseRepository.save(existingCase));
+        Case saved = caseRepository.save(existingCase);
+        auditService.log("CASE", saved.getId(), AuditAction.STATUS_CHANGED,
+                currentStatus.name(), newStatus.name());
+        return CaseResponse.from(saved);
+
     }
 }
