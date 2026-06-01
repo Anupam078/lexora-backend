@@ -81,6 +81,12 @@ public class AuthController {
                 .findByEmailAndTenantId(request.email(), tenant.getId())
                 .orElse(null);
 
+        if (!user.isActive()) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Account is deactivated");
+        }
+
         if (user == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
@@ -100,6 +106,8 @@ public class AuthController {
                 tenant.getId().toString(),
                 user.getRole().name()
         );;
+
+
 
         return ResponseEntity.ok(new LoginResponse(token));
     }
